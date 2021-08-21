@@ -61,3 +61,56 @@ X <- data.frame(centered_covid_avg, centered_sta_avg, centered_quiz_avg)
 Y <- data.frame(quiz4)
 pairs(X)
 ```
+
+```{r}
+n<-length(quiz4)
+
+model1<-lm(quiz4~centered_covid_avg, data=clean_data)
+p_prime1 <- length(model1$coefficients)
+summary(model1)
+SSres1<-deviance(model1)
+AIC1<-n*log(SSres1) -n*log(n) + 2*p_prime1
+print(AIC1)
+
+model2<-lm(quiz4~centered_sta_avg, data=clean_data)
+p_prime2 <- length(model2$coefficients)
+summary(model2)
+SSres2<-deviance(model2)
+AIC2<-n*log(SSres2) -n*log(n) + 2*p_prime2
+print(AIC2)
+
+model3<-lm(quiz4~centered_quiz_avg, data=clean_data)
+p_prime3 <- length(model3$coefficients)
+summary(model3)
+SSres3<-deviance(model3)
+AIC3<-n*log(SSres3) -n*log(n) + 2*p_prime3
+print(AIC3)
+
+model4<-lm(quiz4~centered_covid_avg + centered_quiz_avg, data=clean_data)
+p_prime4 <- length(model4$coefficients)
+summary(model4)
+SSres4<-deviance(model4)
+AIC4<-n*log(SSres4) -n*log(n) + 2*p_prime4
+print(AIC4)
+
+model5<-lm(quiz4~centered_sta_avg + centered_quiz_avg, data=clean_data)
+p_prime5 <- length(model5$coefficients)
+summary(model5)
+SSres5<-deviance(model5)
+AIC5<-n*log(SSres5) -n*log(n) + 2*p_prime5
+print(AIC5)
+
+model6<-lm(quiz4~centered_sta_avg + centered_covid_avg, data=clean_data)
+p_prime6 <- length(model6$coefficients)
+summary(model6)
+SSres6<-deviance(model6)
+AIC6<-n*log(SSres6) -n*log(n) + 2*p_prime6
+print(AIC6)
+
+model7<-lm(quiz4~centered_quiz_avg + centered_covid_avg + centered_sta_avg, data=clean_data)
+p_prime7 <- length(model7$coefficients)
+summary(model7)
+SSres7<-deviance(model7)
+AIC7<-n*log(SSres7) -n*log(n) + 2*p_prime7
+print(AIC7)
+```
