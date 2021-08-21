@@ -1,0 +1,63 @@
+---
+title: "FinalProject"
+author: "Gautam Gireesh"
+date: "18/08/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r}
+library(tidyverse)
+df<-read.csv("data.csv")
+clean_data<-na.omit(df)
+```
+
+```{r covid hours}
+covid1 = clean_data[,c(3)]
+covid2 = clean_data[,c(7)]
+covid3 = clean_data[,c(10)]
+covid4 = clean_data[,c(13)]
+
+covid_list<-list(covid1, covid2, covid3, covid4)
+covid_matrice<-do.call(cbind, covid_list)
+covid_average<-rowMeans(covid_matrice)
+covid_mean<-mean(covid_average)
+centered_covid_avg<-covid_average - covid_mean
+```
+
+```{r quiz score}
+quiz1 = clean_data[,c(5)]
+quiz2 = clean_data[,c(8)]
+quiz3 = clean_data[,c(11)]
+quiz4 = clean_data[,c(14)]
+
+quiz_list<-list(quiz1, quiz2, quiz3)
+quiz_matrice<-do.call(cbind, quiz_list)
+quiz_average<-rowMeans(quiz_matrice)
+quiz_mean<-mean(quiz_average)
+centered_quiz_avg<-quiz_average - quiz_mean
+```
+
+```{r stats hours}
+sta1 = clean_data[,c(2)]
+sta2 = clean_data[,c(6)]
+sta3 = clean_data[,c(9)]
+sta4 = clean_data[,c(12)]
+
+sta_list<-list(sta1, sta2, sta3, sta4)
+sta_matrice<-do.call(cbind, sta_list)
+sta_average<-rowMeans(sta_matrice)
+sta_mean<-mean(sta_average)
+centered_sta_avg<-sta_average - sta_mean
+```
+
+```{r constructing final data frame}
+X <- data.frame(centered_covid_avg, centered_sta_avg, centered_quiz_avg)
+Y <- data.frame(quiz4)
+pairs(X)
+```
