@@ -6,7 +6,7 @@ output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ## R Markdown
@@ -15,6 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(olsrr)
 library(rcompanion)
+library(caret)
 # df<-read.csv("data.csv")
 # clean_data<-na.omit(df)
 # data_split<-split(clean_data, clean_data$Country)
@@ -82,7 +83,6 @@ asian_quiz_matrice<-do.call(cbind, asian_quiz_list)
 asian_quiz_average<-rowMeans(asian_quiz_matrice, na.rm = TRUE)
 asian_quiz_mean<-mean(asian_quiz_average, na.rm = TRUE)
 asian_centered_quiz_avg<-asian_quiz_average - asian_quiz_mean
-# hist(asian_centered_quiz_avg)
 ```
 
 ```{r stats hours[AMERICAN]}
