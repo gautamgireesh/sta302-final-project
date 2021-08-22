@@ -14,6 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(tidyverse)
 library(olsrr)
+library(rcompanion)
 # df<-read.csv("data.csv")
 # clean_data<-na.omit(df)
 # data_split<-split(clean_data, clean_data$Country)
@@ -58,6 +59,7 @@ quiz1 = american_data[,c(5)]
 quiz2 = american_data[,c(8)]
 quiz3 = american_data[,c(11)]
 quiz4 = american_data[,c(14)]
+hist(quiz4)
 
 quiz_list<-list(quiz1, quiz2, quiz3)
 quiz_matrice<-do.call(cbind, quiz_list)
@@ -72,13 +74,15 @@ asian_quiz1 = asian_data[,c(5)]
 asian_quiz2 = asian_data[,c(8)]
 asian_quiz3 = asian_data[,c(11)]
 asian_quiz4 = asian_data[,c(14)]
-
+transformed_asian_quiz4 = transformTukey(asian_quiz4, plotit=FALSE)
+hist(asian_quiz4)
+hist(transformed_asian_quiz4)
 asian_quiz_list<-list(asian_quiz1, asian_quiz2, asian_quiz3)
 asian_quiz_matrice<-do.call(cbind, asian_quiz_list)
 asian_quiz_average<-rowMeans(asian_quiz_matrice, na.rm = TRUE)
 asian_quiz_mean<-mean(asian_quiz_average, na.rm = TRUE)
 asian_centered_quiz_avg<-asian_quiz_average - asian_quiz_mean
-hist(asian_centered_quiz_avg)
+# hist(asian_centered_quiz_avg)
 ```
 
 ```{r stats hours[AMERICAN]}
@@ -123,12 +127,6 @@ pairs(~asian_centered_covid_avg + asian_centered_sta_avg + asian_centered_quiz_a
 n<-length(quiz4)
 
 full_model<-lm(quiz4 ~ centered_covid_avg + centered_sta_avg + centered_quiz_avg, data=american_data)
-p_prime0 <- length(full_model$coefficients)
-summary(full_model)
-SSres0<-deviance(full_model)
-AIC0<-n*log(SSres0) -n*log(n) + 2*p_prime0
-print(AIC0)
-
 
 model1<-lm(quiz4~centered_covid_avg, data=american_data)
 p_prime1 <- length(model1$coefficients)
@@ -137,7 +135,6 @@ SSres1<-deviance(model1)
 AIC1<-n*log(SSres1) -n*log(n) + 2*p_prime1
 print(AIC1)
 mallow_cp1<-ols_mallows_cp(model1, full_model)
-plot(model1, which=1)
 
 model2<-lm(quiz4~centered_sta_avg, data=american_data)
 p_prime2 <- length(model2$coefficients)
@@ -154,45 +151,8 @@ SSres3<-deviance(model3)
 AIC3<-n*log(SSres3) -n*log(n) + 2*p_prime3
 print(AIC3)
 mallow_cp3<-ols_mallows_cp(model3, full_model)
-layout(matrix(c(1,2,3,4),2,2)) 
+layout(matrix(c(1,2,3,4),2,2))
 plot(model3)
-
-cooksD <- cooks.distance(model3)
-
-n <- nrow(american_data)
-plot(cooksD, main = "Cooks Distance for Influential Obs")
-abline(h = 4/n, lty = 2, col = "steelblue") # add cutoff line
-
-influential_obs <- as.numeric(names(cooksD)[(cooksD > (4/n))])
-
-#define new data frame with influential points removed
-no_outliers_american <- american_data[-influential_obs, ]
-
-# ols_plot_cooksd_bar(model3)
-
-# Finding Influential points
-# cutoff <- 4/((nrow(model3)-length(model3$coefficients)-2)) 
-# plot(model3, which=4, cook.levels=cutoff)
-# 
-# CD_american <- cooks.distance(model3)
-# CD_american <- round(CD_american, 5)
-# sorted_CD <-rev(sort(CD_american))
-# print(sorted_CD)
-# mean_CD <- mean(CD_list)
-# threshold <- 4*mean_CD
-# 
-# influential<-names(sorted_CD)[sorted_CD > threshold]
-# influential_vector<-c()
-# for(i in influential){
-#   influential_vector <- append(influential_vector, as.numeric(i))
-# }
-# 
-# no_influential_american <- american_data[-influential_vector, ]
-
-new_model3<-lm(quiz4~centered_quiz_avg, data=no_outliers_american)
-
-layout(matrix(c(1,2,3,4),2,2)) 
-plot(new_model3)
 
 model4<-lm(quiz4~centered_covid_avg + centered_quiz_avg, data=american_data)
 p_prime4 <- length(model4$coefficients)
@@ -205,10 +165,11 @@ mallow_cp4<-ols_mallows_cp(model4, full_model)
 model5<-lm(quiz4~centered_sta_avg + centered_quiz_avg, data=american_data)
 p_prime5 <- length(model5$coefficients)
 summary(model5)
-SSres5<-deviance(model5)
-AIC5<-n*log(SSres5) -n*log(n) + 2*p_prime5
-print(AIC5)
+ssres5<-deviance(model5)
+aic5<-n*log(ssres5) -n*log(n) + 2*p_prime5
+print(aic5)
 mallow_cp5<-ols_mallows_cp(model5, full_model)
+
 
 model6<-lm(quiz4~centered_sta_avg + centered_covid_avg, data=american_data)
 p_prime6 <- length(model6$coefficients)
@@ -231,11 +192,6 @@ mallow_cp7<-ols_mallows_cp(model7, full_model)
 asian_n<-length(asian_quiz4)
 
 asian_full_model<-lm(asian_quiz4~asian_centered_covid_avg + asian_centered_sta_avg + asian_centered_quiz_avg, data=asian_data)
-asian_p_prime1 <- length(full_asian_model$coefficients)
-summary(full_asian_model)
-asian_SSres1<-deviance(full_asian_model)
-asian_AIC1<-asian_n*log(asian_SSres1) -asian_n*log(asian_n) + 2*asian_p_prime1
-print(asian_AIC1)
 
 asian_model1<-lm(asian_quiz4~asian_centered_covid_avg, data=asian_data)
 asian_p_prime1 <- length(asian_model1$coefficients)
@@ -260,8 +216,6 @@ asian_SSres3<-deviance(asian_model3)
 asian_AIC3<-asian_n*log(asian_SSres3) -asian_n*log(asian_n) + 2*asian_p_prime3
 print(asian_AIC3)
 asian_mallow_cp3<-ols_mallows_cp(asian_model3, asian_full_model)
-layout(matrix(c(1,2,3,4),2,2)) 
-plot(asian_model3)
 
 asian_model4<-lm(asian_quiz4~asian_centered_covid_avg + asian_centered_quiz_avg, data=asian_data)
 asian_p_prime4 <- length(asian_model4$coefficients)
@@ -278,6 +232,8 @@ asian_SSres5<-deviance(asian_model5)
 asian_AIC5<-asian_n*log(asian_SSres5) -asian_n*log(asian_n) + 2*asian_p_prime5
 print(asian_AIC5)
 asian_mallow_cp5<-ols_mallows_cp(asian_model5, asian_full_model)
+layout(matrix(c(1,2,3,4),2,2))
+plot(asian_model5)
 
 asian_model6<-lm(asian_quiz4~asian_centered_sta_avg + asian_centered_covid_avg, data=asian_data)
 asian_p_prime6 <- length(asian_model6$coefficients)
