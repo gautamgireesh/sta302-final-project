@@ -28,6 +28,7 @@ covid_matrice<-do.call(cbind, covid_list)
 covid_average<-rowMeans(covid_matrice)
 covid_mean<-mean(covid_average)
 centered_covid_avg<-covid_average - covid_mean
+hist(centered_covid_avg)
 ```
 
 ```{r quiz score}
@@ -41,6 +42,7 @@ quiz_matrice<-do.call(cbind, quiz_list)
 quiz_average<-rowMeans(quiz_matrice)
 quiz_mean<-mean(quiz_average)
 centered_quiz_avg<-quiz_average - quiz_mean
+hist(centered_quiz_avg)
 ```
 
 ```{r stats hours}
