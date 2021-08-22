@@ -156,19 +156,43 @@ print(AIC3)
 mallow_cp3<-ols_mallows_cp(model3, full_model)
 layout(matrix(c(1,2,3,4),2,2)) 
 plot(model3)
+
+cooksD <- cooks.distance(model3)
+
+n <- nrow(american_data)
+plot(cooksD, main = "Cooks Distance for Influential Obs")
+abline(h = 4/n, lty = 2, col = "steelblue") # add cutoff line
+
+influential_obs <- as.numeric(names(cooksD)[(cooksD > (4/n))])
+
+#define new data frame with influential points removed
+no_outliers_american <- american_data[-influential_obs, ]
+
+# ols_plot_cooksd_bar(model3)
+
 # Finding Influential points
-cutoff <- 4/((nrow(model3)-length(model3$coefficients)-2)) 
-plot(model3, which=4, cook.levels=cutoff)
+# cutoff <- 4/((nrow(model3)-length(model3$coefficients)-2)) 
+# plot(model3, which=4, cook.levels=cutoff)
+# 
+# CD_american <- cooks.distance(model3)
+# CD_american <- round(CD_american, 5)
+# sorted_CD <-rev(sort(CD_american))
+# print(sorted_CD)
+# mean_CD <- mean(CD_list)
+# threshold <- 4*mean_CD
+# 
+# influential<-names(sorted_CD)[sorted_CD > threshold]
+# influential_vector<-c()
+# for(i in influential){
+#   influential_vector <- append(influential_vector, as.numeric(i))
+# }
+# 
+# no_influential_american <- american_data[-influential_vector, ]
 
-CD_american <- cooks.distance(model3)
-CD_american <- round(CD_american, 5)
-sorted_CD <-rev(sort(CD_american))
-print(sorted_CD)
-mean_CD <- mean(CD_list)
-threshold <- 4*mean_CD
+new_model3<-lm(quiz4~centered_quiz_avg, data=no_outliers_american)
 
-influential<-names(sorted_CD)[sorted_CD > threshold]
-## TOODOOOOOOOOO
+layout(matrix(c(1,2,3,4),2,2)) 
+plot(new_model3)
 
 model4<-lm(quiz4~centered_covid_avg + centered_quiz_avg, data=american_data)
 p_prime4 <- length(model4$coefficients)
