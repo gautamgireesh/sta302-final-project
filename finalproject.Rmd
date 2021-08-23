@@ -251,3 +251,12 @@ asian_AIC7<-asian_n*log(asian_SSres7) -asian_n*log(asian_n) + 2*asian_p_prime7
 print(asian_AIC7)
 asian_mallow_cp7<-ols_mallows_cp(asian_model7, asian_full_model)
 ```
+
+```{r Testing model}
+sresid <- studres(model3) 
+hist(sresid, freq=FALSE, 
+     main="Distribution of Studentized Residuals")
+xfit<-seq(min(sresid),max(sresid),length=40) 
+yfit<-dnorm(xfit) 
+lines(xfit, yfit)
+```

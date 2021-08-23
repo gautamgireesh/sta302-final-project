@@ -1,0 +1,77 @@
+---
+title: "Demonstration 4"
+author: "Nnenna Asidianya"
+date: "8/3/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE,warning=FALSE)
+```
+
+For demonstration purposes I have displayed the code, hence echo=TRUE here. For your final report please do not show the code in the write up. 
+
+## Creating tables in R
+
+```{r}
+
+#set your own WD; this is mine to the buses file
+setwd("C:/Users/User/Desktop/STA302 Summer/Week 3/Lecture 5")
+
+buses=read.table('buses.txt', header=FALSE)
+colnames(buses) <- c("expense","miles", "percentD", "percentF", "receipt")
+attach(buses)
+
+```
+### Gtsummary Table:
+
+```{r}
+#install.packages("gtsummary")
+library(gtsummary)
+
+multi.fit = glm(expense~ miles + percentD, data=buses)
+
+
+t1 <- tbl_regression(multi.fit, exponentiate = FALSE)
+t1
+```
+
+
+For more information: http://www.danieldsjoberg.com/gtsummary/
+
+### ktable:
+
+```{r}
+library(kableExtra)
+
+beta<-c("beta1", "beta2","beta3")
+value<-c(1, 2.1, 0.5)
+
+#basic
+dt<-data.frame(beta, value)
+tbl<-kbl(dt)
+tbl
+```
+For more information:  
+https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html  
+
+You can do more with ktable, so search about the link I have provided. 
+
+## Report Formatting:
+
+A built in math mode to write out your regression models:
+
+$$y_i = b_0 + b_1 x_i + \epsilon$$
+For creating subection headers:
+
+# Header
+
+## Header 2
+
+### Header 3
+
+https://rmarkdown.rstudio.com/authoring_basics.html 
+
+
