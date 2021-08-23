@@ -67,11 +67,13 @@ quiz_mean<-mean(quiz_average, na.rm = TRUE)
 centered_quiz_avg<-quiz_average - quiz_mean
 ```
 
-```{r quiz score ASIAN}
+```{r quiz score ASIAN, results = 'hide'}
 asian_quiz1 = asian_split[,c(5)]
 asian_quiz2 = asian_split[,c(8)]
 asian_quiz3 = asian_split[,c(11)]
 asian_quiz4 = asian_split[,c(14)]
+transformed_quiz <- transformTukey(asian_quiz4, quiet = TRUE, plotit = FALSE)
+asian_quiz4 <- transformed_quiz
 
 asian_quiz_list<-list(asian_quiz1, asian_quiz2, asian_quiz3)
 asian_quiz_matrice<-do.call(cbind, asian_quiz_list)
@@ -137,6 +139,15 @@ As a group, we decided we wanted to clean two important things before using our 
 
 
 ## Description of Data
+
+When performing regression analysis, we need to keep normality in mine. We need to ensure that our response variable is normally distributed. In the case of our american quiz gradesm, they were already normally distributed. However, our asian quiz grades was left skewed. Using a function called transformTukey() from an R package called rcompanion, which performs Tukey's Lader of Powers on a vector to make it more normally distributed.
+
+```{r}
+h1 <- ggplot(asian_data, aes(x=asian_quiz4)) + geom_histogram(bins=15, col = "black", fill = "blue")
+h2 <- ggplot(asian_data, aes(x=transformed_quiz)) + geom_histogram(bins=15, col = "black", fill = "blue")
+
+grid.arrange(h1, h2, nrow=1)
+```
 
 Histogram of american predictors
 
@@ -329,6 +340,10 @@ mallow_cp7<-ols_mallows_cp(model7, full_model)
 asian_n<-length(asian_quiz4)
 
 asian_full_model<-lm(asian_data$asian_quiz4~asian_data$asian_centered_covid_avg + asian_data$asian_centered_sta_avg + asian_data$asian_centered_quiz_avg, data=asian_data)
+asian_CD <- cooks.distance(asian_full_model)
+n = nrow(asian_data)
+asian_influential <- influential <- as.numeric(names(asian_CD)[(asian_CD > (4/n))])
+asian_data <- asian_data[-asian_influential,]
 
 asian_model1<-lm(asian_data$asian_quiz4~asian_data$asian_centered_covid_avg, data=asian_data)
 asian_p_prime1 <- length(asian_model1$coefficients)
