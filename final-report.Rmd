@@ -72,8 +72,6 @@ asian_quiz1 = asian_split[,c(5)]
 asian_quiz2 = asian_split[,c(8)]
 asian_quiz3 = asian_split[,c(11)]
 asian_quiz4 = asian_split[,c(14)]
-transformed_quiz <- transformTukey(asian_quiz4, quiet = TRUE, plotit = FALSE)
-asian_quiz4 <- transformed_quiz
 
 asian_quiz_list<-list(asian_quiz1, asian_quiz2, asian_quiz3)
 asian_quiz_matrice<-do.call(cbind, asian_quiz_list)
@@ -140,15 +138,6 @@ As a group, we decided we wanted to clean two important things before using our 
 
 ## Description of Data
 
-When performing regression analysis, we need to keep normality in mine. We need to ensure that our response variable is normally distributed. In the case of our american quiz gradesm, they were already normally distributed. However, our asian quiz grades was left skewed. Using a function called transformTukey() from an R package called rcompanion, which performs Tukey's Lader of Powers on a vector to make it more normally distributed.
-
-```{r}
-h1 <- ggplot(asian_data, aes(x=asian_quiz4)) + geom_histogram(bins=15, col = "black", fill = "blue")
-h2 <- ggplot(asian_data, aes(x=transformed_quiz)) + geom_histogram(bins=15, col = "black", fill = "blue")
-
-grid.arrange(h1, h2, nrow=1)
-```
-
 Histogram of american predictors
 
 ```{r}
@@ -172,7 +161,6 @@ h3 <- ggplot(asian_data, aes(x=asian_centered_covid_avg)) + geom_histogram(bins=
 b1 <- ggplot(asian_data, aes(x=asian_centered_quiz_avg)) + geom_boxplot(col = "black", fill = "blue")
 b2 <- ggplot(asian_data, aes(x=asian_centered_sta_avg)) + geom_boxplot(col = "black", fill = "blue")
 b3 <- ggplot(asian_data, aes(x=asian_centered_covid_avg)) + geom_boxplot(col = "black", fill = "blue")
-
 
 grid.arrange(h1, h2, h3, b1, b2, b3, nrow=2)
 ```
